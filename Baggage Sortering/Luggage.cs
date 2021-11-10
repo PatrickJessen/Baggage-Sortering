@@ -8,10 +8,10 @@ namespace Baggage_Sortering
 {
     class Luggage
     {
-        public Country Destination { get; set; }
-        public string Owner { get; set; }
-        public DateTime TimeStampIn { get; set; }
-        public DateTime TimeStampOut { get; set; }
+        public Country Destination { get; private set; }
+        public string Owner { get; private set; }
+        public DateTime TimeStampIn { get; private set; }
+        public DateTime TimeStampOut { get { return CreateTimeStamp(); } }
 
         public Luggage(Country destination, string owner)
         {

@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Baggage_Sortering
 {
-    class Terminal : IManager
+    class Terminal : ISortBuffer
     {
         public event EventHandler OnLuggageSortedOut;
         public event EventHandler OnOpenCloseEvent;
-        public static Luggage[] LuggageBuffer { get; set; }
-        public Passenger Passenger { get; set; }
-        public int Number { get; set; }
+        private Luggage[] Luggage;
+        public int TerminalNumber { get; set; }
         private bool isOpen;
         public bool IsOpen
         {
@@ -27,19 +26,56 @@ namespace Baggage_Sortering
             }
         }
 
-        public Terminal(int number)
+        public Terminal(int terminalNumber, int maxLuggageSlots)
         {
-            this.Number = number;
+            this.TerminalNumber = terminalNumber;
+            IsOpen = true;
+            this.Luggage = new Luggage[maxLuggageSlots];
         }
 
+        public void TransferLuggageToTerminal(Luggage luggage)
+        {
+            if (!IsLuggageBufferFull())
+            {
+                this.Luggage[this.Luggage.Length - 1] = luggage;
+                Sort();
+            }
+        }
 
+        private bool IsLuggageBufferFull()
+        {
+            int count = 0;
+            for (int i = 0; i < Luggage.Length; i++)
+                if (Luggage[i] != null)
+                    count++;
+
+            if (count == Luggage.Length)
+                return true;
+            return false;
+        }
+
+        public void Sort()
+        {
+            for (int i = this.Luggage.Length - 1; i > 0; i--)
+            {
+                try
+                {
+                    if (Luggage[i] == null)
+                        Luggage[i] = Luggage[i + 1];
+                }
+                catch
+                {
+
+                }
+            }
+        }
 
         public void TriggerOnLuggageTransfered()
         {
 
             EventHandler handler = OnLuggageSortedOut;
-            if (handler != null)
-                OnLuggageSortedOut($"{Counter.LuggageBuffer[0].Owner}'s luggage was transfered at {Counter.LuggageBuffer[0].TimeStampOut}. And going to {Counter.LuggageBuffer[0].Destination}", EventArgs.Empty);
+            //if (handler != null)
+                //OnLuggageSortedOut($"{Counter.LuggageBuffer[0].Owner}'s luggage was transfered at {Counter.LuggageBuffer[0].TimeStampOut}. And going to {Counter.LuggageBuffer[0].Destination}", EventArgs.Empty);
         }
 
         public void TriggerOnOpenCloseEvent()
@@ -48,9 +84,9 @@ namespace Baggage_Sortering
             if (handler != null)
             {
                 if (IsOpen)
-                    OnOpenCloseEvent($"\nTerminal number {Number} was opened", EventArgs.Empty);
+                    OnOpenCloseEvent($"\nTerminal number {TerminalNumber} was opened", EventArgs.Empty);
                 else
-                    OnOpenCloseEvent($"\nTerminal number {Number} was closed", EventArgs.Empty);
+                    OnOpenCloseEvent($"\nTerminal number {TerminalNumber} was closed", EventArgs.Empty);
             }
         }
     }

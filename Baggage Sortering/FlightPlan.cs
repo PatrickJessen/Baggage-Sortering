@@ -19,6 +19,7 @@ namespace Baggage_Sortering
         public FlightPlan(Country country)
         {
             TakeOff = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            TakeOff.AddSeconds(10);
             this.Country = country;
             TerminalNumber = SetTerminalNumber();
         }

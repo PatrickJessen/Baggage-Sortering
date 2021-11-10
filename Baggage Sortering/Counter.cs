@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Baggage_Sortering
 {
-    class Counter : IManager
+    class Counter
     {
         public event EventHandler OnPassengerCheckedIn;
         public event EventHandler OnLuggageSortedIn;
         public event EventHandler OnOpenCloseEvent;
         public Passenger Passenger { get; set; }
-        public static Luggage[] LuggageBuffer { get; set; }
+        public Belt CounterBelt { get; set; }
+        public Country Country { get; set; }
         private bool isOpen;
         public bool IsOpen
         {
@@ -28,51 +29,33 @@ namespace Baggage_Sortering
             }
         }
 
-        public int Number { get; set; }
-        private IBufferManager counterManager;
-        private ReservationSystem reservationSystem;
+        public int CounterNumber { get; set; }
 
-        public Counter(int number)
+        public Counter(Country country, int counterNumber, int maxBeltSlots)
         {
-            this.Number = number;
-            counterManager = new CounterManager(this);
-            reservationSystem = new ReservationSystem();
+            this.Country = country;
+            this.CounterNumber = counterNumber;
+            IsOpen = true;
+            CounterBelt = new Belt(maxBeltSlots);
         }
-
-        public void Update(object locker)
+        public void CheckIn(Passenger passenger)
         {
-            while (true)
+            if (IsOpen)
             {
-                DateTime startTime = DateTime.Now;
-                while ((DateTime.Now - startTime).Seconds < 10)
-                {
-                    if (IsOpen)
-                        try
-                        {
-                            if (Terminal.LuggageBuffer[Terminal.LuggageBuffer.Length] != null)
-                                Monitor.Wait(locker);
-                            else
-                            {
-                                Monitor.Enter(locker);
-                                CheckIn();
-                                counterManager.AddToBuffer(this.Passenger.Luggage);
-                                TriggerOnLuggageSortedIn();
-                            }
-                        }
-                        finally
-                        {
-                            Monitor.PulseAll(locker);
-                            Monitor.Exit(locker);
-                        }
-                }
+                this.Passenger = passenger;
+                TriggerOnPassengerCheckedIn();
+                Thread.Sleep(1500);
+                AddToBelt();
             }
         }
 
-        private void CheckIn()
+        private void AddToBelt()
         {
-            this.Passenger = reservationSystem.MakeNewReservation();
-            TriggerOnPassengerCheckedIn();
-            Thread.Sleep(2000);
+            if (!CounterBelt.IsFull)
+            {
+                CounterBelt.Add(this.Passenger.Luggage);
+                TriggerOnLuggageSortedIn();
+            }
         }
 
         private void TriggerOnPassengerCheckedIn()
@@ -99,9 +82,9 @@ namespace Baggage_Sortering
             if (handler != null)
             {
                 if (IsOpen)
-                    OnOpenCloseEvent($"\nCounter number {Number} was opened", EventArgs.Empty);
+                    OnOpenCloseEvent($"\nCounter number {CounterNumber} was opened", EventArgs.Empty);
                 else
-                    OnOpenCloseEvent($"\nCounter number {Number} was closed", EventArgs.Empty);
+                    OnOpenCloseEvent($"\nCounter number {CounterNumber} was closed", EventArgs.Empty);
             }
         }
     }

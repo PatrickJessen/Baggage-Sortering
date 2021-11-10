@@ -8,7 +8,7 @@ namespace Baggage_Sortering
 {
     class Passenger
     {
-        public string Name { get; set; }
+        public string Name { get; private set; }
         public Luggage Luggage { get; set; }
         public FlightPlan FlightPlan { get; set; }
 
