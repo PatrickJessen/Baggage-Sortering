@@ -6,7 +6,8 @@ namespace Baggage_Sortering
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Simulator simulator = new Simulator();
+            simulator.StartSimulator();
         }
     }
 }

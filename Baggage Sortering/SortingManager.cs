@@ -9,70 +9,48 @@ namespace Baggage_Sortering
 {
     class SortingManager
     {
-        private Counter[] counter;
-        private Terminal[] terminal;
-        private int bufferSize;
         private int gateSize;
-        private ReservationSystem reservationSystem;
 
-        public SortingManager(int gateSize = 3)
+        public SortingManager(int gateSize)
         {
             this.gateSize = gateSize;
-
-            counter = new Counter[gateSize];
-            terminal = new Terminal[gateSize];
-            bufferSize = gateSize * 3;
-
-            Initialize();
         }
 
-        private void Initialize()
+        public void StartSorting(object locker, Counter[] counter, Terminal[] terminal)
         {
-            for (int i = 0; i < gateSize; i++)
+            DateTime startTime = DateTime.Now;
+            while ((DateTime.Now - startTime).Seconds < 5)
             {
-                if (counter[i] == null)
+                try
                 {
-                    counter[i] = new Counter((Country)i, i, bufferSize);
+                    Monitor.Enter(locker);
+                    for (int i = 0; i < gateSize; i++)
+                        for (int j = 0; j < gateSize; j++)
+                            if (terminal[j].LuggageBufferIsFull() || counter[i].CounterBelt.IsFull)
+                            {
+                                Monitor.Wait(locker);
+                                break;
+                            }
+                            else if (CanBeSorted(counter, i) && counter[i].CounterBelt.Luggage[0].Destination == terminal[j].Destination)
+                            {
+                                terminal[j].TransferLuggageToTerminal(counter[i].CounterBelt.Luggage[0]);
+                                terminal[j].TriggerOnLuggageTransfered(counter[i].CounterBelt.Luggage[0]);
+                                counter[i].CounterBelt.RemoveAt(0);
+                                //todo:: make so the luggage only can be transfered 10 seconds after it was checked in.
+                            }
                 }
-
-                if (terminal[i] == null)
+                finally
                 {
-                    terminal[i] = new Terminal(i, bufferSize);
+                    Monitor.PulseAll(locker);
+                    Monitor.Exit(locker);
                 }
             }
         }
 
-        public void StartSorting()
+        private bool CanBeSorted(Counter[] counter, int index)
         {
-            while (true)
-            {
-                DateTime startTime = DateTime.Now;
-                while ((DateTime.Now - startTime).Seconds < 5)
-                {
-                    ReservationSystem reservationSystem = new ReservationSystem();
-                    Passenger passenger = reservationSystem.MakeNewReservation();
-                    int index = (int)passenger.FlightPlan.Country;
-                    if (IsBeltFull(index))
-                        Monitor.Wait(this);
-                    try
-                    {
-                        Monitor.Enter(this);
-                        counter[index].CheckIn(passenger);
-                        Thread.Sleep(2000);
-                        terminal[index].TransferLuggageToTerminal(counter[index].CounterBelt.Luggage[0]);
-                    }
-                    finally
-                    {
-                        Monitor.PulseAll(this);
-                        Monitor.Exit(this);
-                    }
-                }
-            }
-        }
-
-        private bool IsBeltFull(int index)
-        {
-            if (counter[index].CounterBelt.IsFull)
+            //FIX!!!!!!!
+            if (counter[index].CounterBelt.Luggage[0] != null && (counter[index].CounterBelt.Luggage[0].TimeStampIn - DateTime.UtcNow).Seconds > DateTime.UtcNow.Second + 5)
                 return true;
             return false;
         }

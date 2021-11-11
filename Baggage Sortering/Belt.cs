@@ -10,7 +10,7 @@ namespace Baggage_Sortering
     {
         public bool IsRunning { get; set; }
         public int MaxSlots { get; private set; }
-        public int LuggagesOnBelt { get; private set; }
+        public int LuggagesOnBelt { get; private set; } = 0;
         private bool isFull;
         public bool IsFull
         {
@@ -18,7 +18,7 @@ namespace Baggage_Sortering
             {
                 return isFull;
             }
-            set
+            private set
             {
                 if (LuggagesOnBelt != MaxSlots)
                     isFull = false;
@@ -41,21 +41,24 @@ namespace Baggage_Sortering
             Sort();
         }
 
-        public void Remove()
+        public void RemoveAt(int index)
         {
-            Luggage[0] = null;
+            Luggage[index] = null;
             LuggagesOnBelt--;
             Sort();
         }
 
         public void Sort()
         {
-            for (int i = MaxSlots -1; i > 0; i--)
+            for (int i = MaxSlots; i >= 0; i--)
             {
                 try
                 {
                     if (Luggage[i] == null)
+                    {
                         Luggage[i] = Luggage[i + 1];
+                        Luggage[i + 1] = null;
+                    }
                 }
                 catch
                 {

@@ -51,11 +51,8 @@ namespace Baggage_Sortering
 
         private void AddToBelt()
         {
-            if (!CounterBelt.IsFull)
-            {
-                CounterBelt.Add(this.Passenger.Luggage);
-                TriggerOnLuggageSortedIn();
-            }
+            CounterBelt.Add(this.Passenger.Luggage);
+            TriggerOnLuggageSortedIn();
         }
 
         private void TriggerOnPassengerCheckedIn()
@@ -72,7 +69,7 @@ namespace Baggage_Sortering
             EventHandler handler = OnLuggageSortedIn;
             if (handler != null)
             {
-                OnLuggageSortedIn($"{this.Passenger.Name}'s luggage was sorted in at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
+                OnLuggageSortedIn($"{this.Passenger.Name}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
             }
         }
 
