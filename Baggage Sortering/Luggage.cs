@@ -13,6 +13,11 @@ namespace Baggage_Sortering
         public DateTime TimeStampIn { get; private set; }
         public DateTime TimeStampOut { get { return CreateTimeStamp(); } }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="owner"></param>
         public Luggage(Country destination, string owner)
         {
             this.Destination = destination;
@@ -20,6 +25,10 @@ namespace Baggage_Sortering
             TimeStampIn = CreateTimeStamp();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private DateTime CreateTimeStamp()
         {
             return DateTime.UtcNow;

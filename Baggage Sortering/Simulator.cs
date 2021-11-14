@@ -9,14 +9,20 @@ namespace Baggage_Sortering
 {
     class Simulator
     {
-        private Counter[] counter;
-        private Terminal[] terminal;
-        private CentralServer server;
+        private readonly Counter[] counter;
+        private readonly Terminal[] terminal;
+        private readonly CentralServer server;
+        private readonly Belt belt;
+
         private int bufferSize;
         private int gateSize;
 
         private Thread[] threads;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gateSize"></param>
         public Simulator(int gateSize = 3)
         {
             this.gateSize = gateSize;
@@ -24,43 +30,52 @@ namespace Baggage_Sortering
             counter = new Counter[gateSize];
             terminal = new Terminal[gateSize];
             bufferSize = gateSize * 3;
+            belt = new Belt(10);
             Initialize();
 
             server = new CentralServer(counter, terminal);
             threads = new Thread[] { new Thread(SimulateCheckIn), new Thread(SimulateSorting), new Thread(server.OpenCloseCounters), new Thread(server.OpenCloseTerminals) };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void StartSimulator()
         {
             for (int i = 0; i < threads.Length; i++)
                 threads[i].Start();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void Initialize()
         {
             for (int i = 0; i < gateSize; i++)
             {
-                counter[i] = new Counter((Country)i, i, bufferSize);
+                counter[i] = new Counter(i);
                 terminal[i] = new Terminal((Country)i, i, bufferSize);
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void SimulateCheckIn()
         {
-            CheckInManager checkIn = new CheckInManager();
+            CheckInManager checkIn = new CheckInManager(counter, belt);
             while (true)
-            {
-                checkIn.StartCheckIn(this, counter);
-            }
+                checkIn.StartCheckIn(this);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void SimulateSorting()
         {
-            SortingManager sorting = new SortingManager(gateSize);
+            SortingManager sorting = new SortingManager(counter, terminal, belt, gateSize);
             while (true)
-            {
-                sorting.StartSorting(this, counter, terminal);
-            }
+                sorting.StartSorting(this);
         }
     }
 }

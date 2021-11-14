@@ -9,6 +9,12 @@ namespace Baggage_Sortering
     static class Input
     {
         static ConsoleKey keyInfo = Console.ReadKey().Key;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static bool KeyState(ConsoleKey key)
         {
             if (keyInfo == key)
@@ -19,6 +25,9 @@ namespace Baggage_Sortering
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static void UpdateKey()
         {
             while (true)

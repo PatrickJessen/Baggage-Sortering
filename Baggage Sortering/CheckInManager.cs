@@ -11,39 +11,64 @@ namespace Baggage_Sortering
     {
         private ReservationSystem reservation;
         private Passenger passenger;
+        private readonly Counter[] counter;
+        private readonly Belt belt;
 
-        public CheckInManager()
+        public CheckInManager(Counter[] counter, Belt belt)
         {
             reservation = new ReservationSystem();
+            this.counter = counter;
+            this.belt = belt;
         }
 
-        public void StartCheckIn(object locker, Counter[] counter)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        public void StartCheckIn(object locker)
         {
-
             try
             {
                 Monitor.Enter(locker);
                 passenger = reservation.MakeNewReservation();
-                for (int i = 0; i < counter.Length; i++)
+
+                if (!IsBeltFull())
                 {
-                    if (counter[i].CounterBelt.IsFull)
-                    {
-                        Monitor.Wait(locker);
-                        break;
-                    }
-                    else if (passenger.FlightPlan.Country == counter[i].Country)
-                    {
-                        counter[i].CheckIn(passenger);
-                        break;
-                    }
-                    Thread.Sleep(1000);
+                    CheckIn();
                 }
+                //Monitor.Wait(locker);
             }
             finally
             {
                 Monitor.PulseAll(locker);
                 Monitor.Exit(locker);
             }
+            Random rand = new Random();
+            Thread.Sleep(rand.Next(1000, 5000));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void CheckIn()
+        {
+            Random rand = new Random();
+            int randNum = rand.Next(0, counter.Length);
+            counter[randNum].CheckInPassenger(passenger);
+            Thread.Sleep(1000);
+            counter[randNum].AddLuggageToBelt(belt);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private bool IsBeltFull()
+        {
+            if (belt.IsFull)
+                return true;
+
+            return false;
         }
     }
 }

@@ -12,9 +12,8 @@ namespace Baggage_Sortering
         public event EventHandler OnPassengerCheckedIn;
         public event EventHandler OnLuggageSortedIn;
         public event EventHandler OnOpenCloseEvent;
+
         public Passenger Passenger { get; set; }
-        public Belt CounterBelt { get; set; }
-        public Country Country { get; set; }
         private bool isOpen;
         public bool IsOpen
         {
@@ -31,58 +30,84 @@ namespace Baggage_Sortering
 
         public int CounterNumber { get; set; }
 
-        public Counter(Country country, int counterNumber, int maxBeltSlots)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="counterNumber"></param>
+        public Counter(int counterNumber)
         {
-            this.Country = country;
             this.CounterNumber = counterNumber;
             IsOpen = true;
-            CounterBelt = new Belt(maxBeltSlots);
-        }
-        public void CheckIn(Passenger passenger)
-        {
-            if (IsOpen)
-            {
-                this.Passenger = passenger;
-                TriggerOnPassengerCheckedIn();
-                Thread.Sleep(1500);
-                AddToBelt();
-            }
         }
 
-        private void AddToBelt()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="passenger"></param>
+        public void CheckInPassenger(Passenger passenger)
         {
-            CounterBelt.Add(this.Passenger.Luggage);
+            this.Passenger = passenger;
+            TriggerOnPassengerCheckedIn();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="belt"></param>
+        public void AddLuggageToBelt(Belt belt)
+        {
+            belt.Add(this.Passenger.Luggage);
             TriggerOnLuggageSortedIn();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void TriggerOnPassengerCheckedIn()
         {
             EventHandler handler = OnPassengerCheckedIn;
             if (handler != null)
             {
-                OnPassengerCheckedIn($"{this.Passenger.Name} Just checked in.", EventArgs.Empty);
+                OnPassengerCheckedIn($"{this.Passenger.Name} {this.Passenger.LastName} Just checked in.", EventArgs.Empty);
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void TriggerOnLuggageSortedIn()
         {
             EventHandler handler = OnLuggageSortedIn;
             if (handler != null)
             {
-                OnLuggageSortedIn($"{this.Passenger.Name}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
+                OnLuggageSortedIn($"{this.Passenger.Name} {this.Passenger.LastName}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void TriggerOnOpenCloseEvent()
         {
             EventHandler handler = OnOpenCloseEvent;
             if (handler != null)
             {
-                if (IsOpen)
-                    OnOpenCloseEvent($"\nCounter number {CounterNumber} was opened", EventArgs.Empty);
-                else
-                    OnOpenCloseEvent($"\nCounter number {CounterNumber} was closed", EventArgs.Empty);
+                ForwardMessage();
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void ForwardMessage()
+        {
+            if (IsOpen)
+            {
+                OnOpenCloseEvent($"\nCounter number {CounterNumber} was opened", EventArgs.Empty);
+                return;
+            }
+
+            OnOpenCloseEvent($"\nCounter number {CounterNumber} was closed", EventArgs.Empty);
         }
     }
 }

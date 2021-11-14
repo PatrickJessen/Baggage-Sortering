@@ -8,15 +8,24 @@ namespace Baggage_Sortering
 {
     class ReservationSystem
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Passenger MakeNewReservation()
         {
             FlightPlan flightPlan = new FlightPlan(GenerateRandomCountry());
             NameGenerator names = new NameGenerator();
             string name = names.GenerateName();
+            string lastName = names.GenerateLastName();
 
-            return new Passenger(name, new Luggage(flightPlan.Country, name), flightPlan);
+            return new Passenger(name, lastName, new Luggage(flightPlan.Country, name + " " + lastName), flightPlan);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private Country GenerateRandomCountry()
         {
             Random rand = new Random();

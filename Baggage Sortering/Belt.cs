@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Baggage_Sortering
 {
-    class Belt : ISortBuffer
+    class Belt
     {
         public bool IsRunning { get; set; }
         public int MaxSlots { get; private set; }
@@ -28,42 +28,62 @@ namespace Baggage_Sortering
         }
         public Luggage[] Luggage { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="maxSlots"></param>
         public Belt(int maxSlots)
         {
             MaxSlots = maxSlots;
             this.Luggage = new Luggage[maxSlots];
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="luggage"></param>
         public void Add(Luggage luggage)
         {
             Luggage[MaxSlots - 1] = luggage;
             LuggagesOnBelt++;
-            Sort();
+            MoveToFirstAvailableSlot();
         }
 
-        public void RemoveAt(int index)
+        /// <summary>
+        /// 
+        /// </summary>
+        public void RemoveFirst()
         {
-            Luggage[index] = null;
+            Luggage[0] = null;
             LuggagesOnBelt--;
-            Sort();
+            MoveToFirstAvailableSlot();
         }
 
-        public void Sort()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Luggage GetFirst()
         {
-            for (int i = MaxSlots; i >= 0; i--)
+            return Luggage[0];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void MoveToFirstAvailableSlot()
+        {
+            for (int i = Luggage.Length -1; i >= 0; i--)
             {
                 try
                 {
-                    if (Luggage[i] == null)
+                    if (Luggage[i] == null && Luggage[i + 1] != null)
                     {
                         Luggage[i] = Luggage[i + 1];
                         Luggage[i + 1] = null;
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
     }

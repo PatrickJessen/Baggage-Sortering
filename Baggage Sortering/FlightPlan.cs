@@ -16,27 +16,16 @@ namespace Baggage_Sortering
         public Country Country { get; private set; }
         public int TerminalNumber { get; private set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="country"></param>
         public FlightPlan(Country country)
         {
             TakeOff = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
             TakeOff.AddSeconds(10);
             this.Country = country;
-            TerminalNumber = SetTerminalNumber();
-        }
-
-        private int SetTerminalNumber()
-        {
-            switch (Country)
-            {
-                case Country.DK:
-                    return 0;
-                case Country.UK:
-                    return 1;
-                case Country.America:
-                    return 2;
-                default:
-                    return -1;
-            }
+            TerminalNumber = (int)country;
         }
     }
 }

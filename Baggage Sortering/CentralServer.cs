@@ -11,6 +11,11 @@ namespace Baggage_Sortering
         private Counter[] counter;
         private Terminal[] terminal;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="counter"></param>
+        /// <param name="terminal"></param>
         public CentralServer(Counter[] counter, Terminal[] terminal)
         {
             this.counter = counter;
@@ -29,6 +34,9 @@ namespace Baggage_Sortering
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void OpenCloseCounters()
         {
             while (true)
@@ -37,6 +45,9 @@ namespace Baggage_Sortering
                         counter[i].IsOpen = !counter[i].IsOpen;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void OpenCloseTerminals()
         {
             while (true)
@@ -45,28 +56,56 @@ namespace Baggage_Sortering
                         terminal[i].IsOpen = !terminal[i].IsOpen;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CentralServer_OnOpenCloseEvent1(object sender, EventArgs e)
         {
             Console.WriteLine(sender);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CentralServer_OnLuggageSortedOut(object sender, EventArgs e)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(sender);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CentralServer_OnOpenCloseEvent(object sender, EventArgs e)
         {
             Console.WriteLine(sender);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CentralServer_OnPassengerCheckedIn(object sender, EventArgs e)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(sender);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CentralServer_OnLuggageSortedIn(object sender, EventArgs e)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(sender);
         }
     }

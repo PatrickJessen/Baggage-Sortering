@@ -9,57 +9,84 @@ namespace Baggage_Sortering
 {
     class SortingManager
     {
+        private readonly Counter[] counter;
+        private readonly Terminal[] terminal;
+        private readonly Belt belt;
+
         private int gateSize;
 
-        public SortingManager(int gateSize)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="counter"></param>
+        /// <param name="terminal"></param>
+        /// <param name="belt"></param>
+        /// <param name="gateSize"></param>
+        public SortingManager(Counter[] counter, Terminal[] terminal, Belt belt, int gateSize)
         {
             this.gateSize = gateSize;
+            this.counter = counter;
+            this.terminal = terminal;
+            this.belt = belt;
         }
 
-        public void StartSorting(object locker, Counter[] counter, Terminal[] terminal)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        public void StartSorting(object locker)
         {
-            DateTime startTime = DateTime.Now;
-            while ((DateTime.Now - startTime).Seconds < 5)
+            try
             {
-                try
+                Monitor.Enter(locker);
+                if (CanBeSorted())
                 {
-                    Monitor.Enter(locker);
-                    for (int i = 0; i < gateSize; i++)
-                        if (CanBeSorted(counter, i))
-                            for (int j = 0; j < gateSize; j++)
-                                if (terminal[j].LuggageBufferIsFull() || counter[i].CounterBelt.IsFull)
-                                {
-                                    Monitor.Wait(locker);
-                                    break;
-                                }
-                                else if (CanBeSorted(counter, i) && counter[i].CounterBelt.Luggage[0].Destination == terminal[j].Destination)
-                                {
-                                    terminal[j].TransferLuggageToTerminal(counter[i].CounterBelt.Luggage[0]);
-                                    terminal[j].TriggerOnLuggageTransfered(counter[i].CounterBelt.Luggage[0]);
-                                    counter[i].CounterBelt.RemoveAt(0);
-                                    break;
-                                    //todo:: make so the luggage only can be transfered 10 seconds after it was checked in.
-                                }
+                    SortLuggage();
+                    return;
                 }
-                finally
-                {
-                    Monitor.PulseAll(locker);
-                    Monitor.Exit(locker);
-                }
-                Thread.Sleep(5000);
+                Monitor.Wait(locker);    
+            }
+            finally
+            {
+                Monitor.PulseAll(locker);
+                Monitor.Exit(locker);
             }
         }
 
-        private bool CanBeSorted(Counter[] counter, int index)
+        /// <summary>
+        /// 
+        /// </summary>
+        private void SortLuggage()
         {
-            //FIX!!!!!!!
-            //if (counter[index].CounterBelt.Luggage[0] != null)
-            //{
+            for (int j = 0; j < gateSize; j++)
+                if (IsDestinationSame(j))
+                {
+                    terminal[j].TakeInLuggage(belt.GetFirst());
+                    belt.RemoveFirst();
+                    break;
+                }
+        }
 
-            //    Console.WriteLine("luggage: " + counter[index].CounterBelt.Luggage[0].TimeStampIn.AddSeconds(5).Second);
-            //    Console.WriteLine("time: " + DateTime.Now.Second);
-            //}
-            if (counter[index].CounterBelt.Luggage[0] != null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="j"></param>
+        /// <returns></returns>
+        private bool IsDestinationSame(int j)
+        {
+            if (terminal[j].Destination == belt.GetFirst().Destination)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private bool CanBeSorted()
+        {
+            //DateTime time = belt.GetFirst().TimeStampIn.AddSeconds(5);
+            if (belt.GetFirst() != null && DateTime.UtcNow > belt.GetFirst().TimeStampIn.AddSeconds(15))
                 return true;
             return false;
         }
