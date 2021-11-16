@@ -31,9 +31,9 @@ namespace Baggage_Sortering
         }
 
         /// <summary>
-        /// 
+        /// Starts sorting luggage
         /// </summary>
-        /// <param name="locker"></param>
+        /// <param name="locker">The object to monitor</param>
         public void StartSorting(object locker)
         {
             try
@@ -42,7 +42,6 @@ namespace Baggage_Sortering
                 if (CanBeSorted())
                 {
                     SortLuggage();
-                    return;
                 }
                 Monitor.Wait(locker);    
             }
@@ -63,7 +62,7 @@ namespace Baggage_Sortering
                 {
                     terminal[j].TakeInLuggage(belt.GetFirst());
                     belt.RemoveFirst();
-                    break;
+                    return;
                 }
         }
 
