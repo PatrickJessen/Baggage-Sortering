@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31112.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Baggage Sortering", "Baggage Sortering\Baggage Sortering.csproj", "{4C7BA571-B10B-46BF-91C1-C9473C13F43B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationSystem", "ReservationSystem\ReservationSystem.csproj", "{E6D5D658-E910-4DB5-BB7B-34FEDE13A13E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReservationSystem", "ReservationSystem\ReservationSystem.csproj", "{E6D5D658-E910-4DB5-BB7B-34FEDE13A13E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

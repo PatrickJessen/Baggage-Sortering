@@ -54,7 +54,7 @@ namespace Baggage_Sortering
             for (int i = 0; i < gateSize; i++)
             {
                 counter[i] = new Counter(i);
-                terminal[i] = new Terminal((Country)i, i, bufferSize);
+                terminal[i] = new Terminal("", i, bufferSize);
             }
         }
 

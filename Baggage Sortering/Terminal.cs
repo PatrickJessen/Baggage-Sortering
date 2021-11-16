@@ -11,7 +11,7 @@ namespace Baggage_Sortering
         public event EventHandler OnLuggageSortedOut;
         public event EventHandler OnOpenCloseEvent;
 
-        public Country Destination { get; private set; }
+        public string Destination { get; private set; }
         public int TerminalNumber { get; set; }
         private bool isOpen;
         public bool IsOpen
@@ -36,7 +36,7 @@ namespace Baggage_Sortering
         /// <param name="country"></param>
         /// <param name="terminalNumber"></param>
         /// <param name="maxLuggageSlots"></param>
-        public Terminal(Country country, int terminalNumber, int maxLuggageSlots)
+        public Terminal(string country, int terminalNumber, int maxLuggageSlots)
         {
             this.maxLuggageSlots = maxLuggageSlots;
             this.Destination = country;

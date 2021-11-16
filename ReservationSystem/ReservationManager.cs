@@ -14,8 +14,9 @@ namespace ReservationSystem
 
         public void MakeReservation()
         {
-            reservation = new Reservation(handler.GetRandomStringFromFile("Assets/FirstNames.txt"), handler.GetRandomStringFromFile("Assets/LastNames.txt"), handler.GetRandomStringFromFile("Assets/Countries.txt"), DateTime.UtcNow);
-            handler.WriteObjectToFile(reservation, "Reservation.txt");
+            reservation = new Reservation(handler.GetRandomStringFromFile("../../../../Assets/FirstNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/LastNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/Countries.txt"), DateTime.UtcNow);
+            handler.WriteObjectToFile(reservation, "../../../../Assets/Reservation.txt");
+            handler.RemoveFirstReservation("../../../../Assets/Reservation.txt");
         }
     }
 }

@@ -4,19 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Baggage_Sortering.FileManagement;
 
 namespace Baggage_Sortering
 {
     class CheckInManager
     {
-        private ReservationSystem reservation;
         private Passenger passenger;
         private readonly Counter[] counter;
         private readonly Belt belt;
+        private readonly FileHandler file;
 
         public CheckInManager(Counter[] counter, Belt belt)
         {
-            reservation = new ReservationSystem();
+            file = new FileHandler();
             this.counter = counter;
             this.belt = belt;
         }
@@ -30,13 +31,11 @@ namespace Baggage_Sortering
             try
             {
                 Monitor.Enter(locker);
-                passenger = reservation.MakeNewReservation();
+                passenger = file.GetReservationFromFile("Reservation.txt");
+                if (IsBeltFull())
+                    Monitor.Wait(locker);
 
-                if (!IsBeltFull())
-                {
-                    CheckIn();
-                }
-                //Monitor.Wait(locker);
+                CheckIn();
             }
             finally
             {
