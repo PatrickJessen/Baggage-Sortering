@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Baggage_Sortering.FileManagement
@@ -16,22 +17,23 @@ namespace Baggage_Sortering.FileManagement
             string lName = reservationString.Split(' ', StringSplitOptions.None)[1];
             string country = reservationString.Split(' ', StringSplitOptions.None)[2];
             DateTime date = Convert.ToDateTime(reservationString.Split(' ', StringSplitOptions.None)[3] + " " + reservationString.Split(' ', StringSplitOptions.None)[4]);
-            return new Passenger(fName, lName, new Luggage(country, fName), new FlightPlan(country));
+            return new Passenger(fName, lName, new Luggage(country, fName, date), new FlightPlan(country));
         }
 
         private string GetReservationString(string path)
         {
             string line = "";
-            using (StreamReader reader = new StreamReader("../../../../Assets/Reservation.txt"))
+            using (StreamReader reader = new StreamReader(path))
             {
-                if (reader.ReadLine() != null)
+                if (reader.ReadLine() == null)
                 {
-                    line = reader.ReadLine();
-                    RemoveFirstReservation(path);
-                    return line;
+                    Thread.Sleep(5000);
                 }
+                line = reader.ReadLine();
+                reader.Close();
+                RemoveFirstReservation(path);
+                return line;
             }
-            return null;
         }
 
         public void RemoveFirstReservation(string path)

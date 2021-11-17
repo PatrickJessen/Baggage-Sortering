@@ -31,7 +31,7 @@ namespace Baggage_Sortering
             try
             {
                 Monitor.Enter(locker);
-                passenger = file.GetReservationFromFile("Reservation.txt");
+                passenger = file.GetReservationFromFile("../../../../Assets/Reservation.txt");
                 if (IsBeltFull())
                     Monitor.Wait(locker);
 

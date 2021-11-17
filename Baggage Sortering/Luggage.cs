@@ -18,11 +18,11 @@ namespace Baggage_Sortering
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="owner"></param>
-        public Luggage(string destination, string owner)
+        public Luggage(string destination, string owner, DateTime timeStampIn)
         {
             this.Destination = destination;
             this.Owner = owner;
-            TimeStampIn = CreateTimeStamp();
+            TimeStampIn = timeStampIn;
         }
 
         /// <summary>

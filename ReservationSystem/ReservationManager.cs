@@ -16,7 +16,6 @@ namespace ReservationSystem
         {
             reservation = new Reservation(handler.GetRandomStringFromFile("../../../../Assets/FirstNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/LastNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/Countries.txt"), DateTime.UtcNow);
             handler.WriteObjectToFile(reservation, "../../../../Assets/Reservation.txt");
-            handler.RemoveFirstReservation("../../../../Assets/Reservation.txt");
         }
     }
 }

@@ -23,11 +23,5 @@ namespace ReservationSystem
             name = lines[randNum];
             return name;
         }
-
-        public void RemoveFirstReservation(string path)
-        {
-            string[] lines = File.ReadAllLines(path);
-            File.WriteAllLines(path, lines.Skip(1).ToArray());
-        }
     }
 }

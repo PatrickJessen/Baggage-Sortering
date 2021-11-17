@@ -58,12 +58,11 @@ namespace Baggage_Sortering
         private void SortLuggage()
         {
             for (int j = 0; j < gateSize; j++)
-                if (IsDestinationSame(j))
-                {
-                    terminal[j].TakeInLuggage(belt.GetFirst());
-                    belt.RemoveFirst();
-                    return;
-                }
+            {
+                terminal[j].TakeInLuggage(belt.GetFirst());
+                belt.RemoveFirst();
+                return;
+            }
         }
 
         /// <summary>
