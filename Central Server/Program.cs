@@ -6,7 +6,18 @@ namespace Central_Server
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Server server = new Server();
+            server.OnMessageReceived += Server_OnMessageReceived;
+            server.StartServer();
+            while (true)
+            {
+                server.SendMessage(Console.ReadLine());
+            }
+        }
+
+        private static void Server_OnMessageReceived(object sender, EventArgs e)
+        {
+            Console.WriteLine(sender);
         }
     }
 }

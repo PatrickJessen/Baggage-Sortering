@@ -49,12 +49,12 @@ namespace Baggage_Sortering
         /// 
         /// </summary>
         /// <param name="luggage"></param>
-        public void TakeInLuggage(Luggage luggage)
+        public void TakeInLuggage(Luggage luggage, Server.ServerHandler server)
         {
             if (!IsLuggageBufferFull() && IsOpen)
             {
                 this.Luggage[this.Luggage.Length - 1] = luggage;
-                TriggerOnLuggageTransfered(luggage);
+                server.SendMessageToServer(SendInformation(luggage));
             }
         }
 
@@ -106,6 +106,11 @@ namespace Baggage_Sortering
             {
                 ForwardMessage();
             }
+        }
+
+        public string SendInformation(Luggage luggage)
+        {
+            return $"{luggage.Owner}'s luggage was transfered at {luggage.TimeStampOut}. And going to {luggage.Destination}";
         }
 
         /// <summary>

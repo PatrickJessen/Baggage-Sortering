@@ -44,20 +44,20 @@ namespace Baggage_Sortering
         /// 
         /// </summary>
         /// <param name="passenger"></param>
-        public void CheckInPassenger(Passenger passenger)
+        public void CheckInPassenger(Passenger passenger, Server.ServerHandler server)
         {
             this.Passenger = passenger;
-            TriggerOnPassengerCheckedIn();
+            server.SendMessageToServer(SendCheckInInformation());
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="belt"></param>
-        public void AddLuggageToBelt(Belt belt)
+        public void AddLuggageToBelt(Belt belt, Server.ServerHandler server)
         {
             belt.Add(this.Passenger.Luggage);
-            TriggerOnLuggageSortedIn();
+            server.SendMessageToServer(SendLuggageInformation());
         }
 
         /// <summary>
@@ -82,6 +82,16 @@ namespace Baggage_Sortering
             {
                 OnLuggageSortedIn($"{this.Passenger.Name} {this.Passenger.LastName}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
             }
+        }
+
+        public string SendCheckInInformation()
+        {
+            return $"{this.Passenger.Name} {this.Passenger.LastName} Just checked in.";
+        }
+
+        private string SendLuggageInformation()
+        {
+            return $"{this.Passenger.Name} {this.Passenger.LastName}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}";
         }
 
         /// <summary>

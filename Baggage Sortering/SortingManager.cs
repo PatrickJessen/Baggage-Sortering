@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Baggage_Sortering.Server;
 
 namespace Baggage_Sortering
 {
@@ -12,6 +13,7 @@ namespace Baggage_Sortering
         private readonly Counter[] counter;
         private readonly Terminal[] terminal;
         private readonly Belt belt;
+        private readonly ServerHandler server;
 
         private int gateSize;
 
@@ -22,12 +24,13 @@ namespace Baggage_Sortering
         /// <param name="terminal"></param>
         /// <param name="belt"></param>
         /// <param name="gateSize"></param>
-        public SortingManager(Counter[] counter, Terminal[] terminal, Belt belt, int gateSize)
+        public SortingManager(Counter[] counter, Terminal[] terminal, Belt belt, ServerHandler server, int gateSize)
         {
             this.gateSize = gateSize;
             this.counter = counter;
             this.terminal = terminal;
             this.belt = belt;
+            this.server = server;
         }
 
         /// <summary>
@@ -59,7 +62,7 @@ namespace Baggage_Sortering
         {
             for (int j = 0; j < gateSize; j++)
             {
-                terminal[j].TakeInLuggage(belt.GetFirst());
+                terminal[j].TakeInLuggage(belt.GetFirst(), server);
                 belt.RemoveFirst();
                 return;
             }

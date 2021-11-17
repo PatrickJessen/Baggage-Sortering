@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Baggage_Sortering.Server;
 
 namespace Baggage_Sortering
 {
@@ -11,8 +12,9 @@ namespace Baggage_Sortering
     {
         private readonly Counter[] counter;
         private readonly Terminal[] terminal;
-        private readonly CentralServer server;
+        //private readonly CentralServer server;
         private readonly Belt belt;
+        private readonly ServerHandler server;
 
         private int bufferSize;
         private int gateSize;
@@ -31,10 +33,11 @@ namespace Baggage_Sortering
             terminal = new Terminal[gateSize];
             bufferSize = gateSize * 3;
             belt = new Belt(10);
+            server = new ServerHandler();
             Initialize();
 
-            server = new CentralServer(counter, terminal);
-            threads = new Thread[] { new Thread(SimulateCheckIn), new Thread(SimulateSorting), new Thread(server.OpenCloseCounters), new Thread(server.OpenCloseTerminals) };
+            //server = new CentralServer(counter, terminal);
+            threads = new Thread[] { new Thread(SimulateCheckIn), new Thread(SimulateSorting) };//, new Thread(server.OpenCloseCounters), new Thread(server.OpenCloseTerminals) };
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace Baggage_Sortering
         /// </summary>
         private void SimulateCheckIn()
         {
-            CheckInManager checkIn = new CheckInManager(counter, belt);
+            CheckInManager checkIn = new CheckInManager(counter, belt, server);
             while (true)
                 checkIn.StartCheckIn(this);
         }
@@ -73,7 +76,7 @@ namespace Baggage_Sortering
         /// </summary>
         private void SimulateSorting()
         {
-            SortingManager sorting = new SortingManager(counter, terminal, belt, gateSize);
+            SortingManager sorting = new SortingManager(counter, terminal, belt, server, gateSize);
             while (true)
                 sorting.StartSorting(this);
         }

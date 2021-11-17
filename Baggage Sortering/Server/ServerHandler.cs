@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +13,10 @@ namespace Baggage_Sortering.Server
         TcpClient client;
         NetworkStream stream;
 
-        public void Connect(string address, int port)
+        public void Connect()
         {
             client = new TcpClient();
-            client.Connect(address, port);
+            client.Connect(Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString(), 80);
         }
 
         public void SendMessageToServer(string message)
