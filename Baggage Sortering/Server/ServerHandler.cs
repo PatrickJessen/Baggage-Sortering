@@ -17,11 +17,11 @@ namespace Baggage_Sortering.Server
         {
             client = new TcpClient();
             client.Connect(Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString(), 80);
+            stream = client.GetStream();
         }
 
         public void SendMessageToServer(string message)
         {
-            stream = client.GetStream();
             byte[] buffer = ASCIIEncoding.ASCII.GetBytes(message);
             stream.Write(buffer, 0, buffer.Length);
             stream.Flush();

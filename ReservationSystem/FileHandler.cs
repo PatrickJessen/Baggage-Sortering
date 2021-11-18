@@ -11,7 +11,7 @@ namespace ReservationSystem
     {
         public void WriteObjectToFile(Reservation obj, string path)
         {
-            File.AppendAllText(path, $"{obj.FirstName} {obj.LastName.ToLower()} {obj.Countries} {obj.TakeOff}\n");
+            File.AppendAllText(path, $"{obj.FirstName} {obj.LastName.ToLower()} {obj.Countries}\n");
         }
 
         public string GetRandomStringFromFile(string path)

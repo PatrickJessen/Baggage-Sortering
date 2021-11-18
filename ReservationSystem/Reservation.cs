@@ -11,14 +11,12 @@ namespace ReservationSystem
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Countries { get; set; }
-        public DateTime TakeOff { get; set; }
 
-        public Reservation(string firstName, string lastName, string countries, DateTime takeOff)
+        public Reservation(string firstName, string lastName, string countries)
         {
             FirstName = firstName;
             LastName = lastName;
             Countries = countries;
-            TakeOff = takeOff;
         }
     }
 }

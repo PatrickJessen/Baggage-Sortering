@@ -39,6 +39,8 @@ namespace Baggage_Sortering
         /// <param name="locker">The object to monitor</param>
         public void StartSorting(object locker)
         {
+            Random rand = new Random();
+            Thread.Sleep(rand.Next(1500, 3000));
             try
             {
                 Monitor.Enter(locker);

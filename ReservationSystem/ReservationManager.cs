@@ -12,10 +12,12 @@ namespace ReservationSystem
         private Reservation reservation;
         private readonly FileHandler handler = new FileHandler();
 
+        private readonly string folder = "../../../../Assets/";
+
         public void MakeReservation()
         {
-            reservation = new Reservation(handler.GetRandomStringFromFile("../../../../Assets/FirstNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/LastNames.txt"), handler.GetRandomStringFromFile("../../../../Assets/Countries.txt"), DateTime.UtcNow);
-            handler.WriteObjectToFile(reservation, "../../../../Assets/Reservation.txt");
+            reservation = new Reservation(handler.GetRandomStringFromFile(folder + "FirstNames.txt"), handler.GetRandomStringFromFile(folder + "LastNames.txt"), handler.GetRandomStringFromFile(folder + "Countries.txt"));
+            handler.WriteObjectToFile(reservation, folder + "Reservation.txt");
         }
     }
 }

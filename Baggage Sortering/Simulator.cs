@@ -29,11 +29,12 @@ namespace Baggage_Sortering
         {
             this.gateSize = gateSize;
 
+            server = new ServerHandler();
+            server.Connect();
             counter = new Counter[gateSize];
             terminal = new Terminal[gateSize];
             bufferSize = gateSize * 3;
             belt = new Belt(10);
-            server = new ServerHandler();
             Initialize();
 
             //server = new CentralServer(counter, terminal);
