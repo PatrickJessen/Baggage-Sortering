@@ -30,6 +30,7 @@ namespace Baggage_Sortering
             this.gateSize = gateSize;
 
             server = new ServerHandler();
+            server.OnCannotConnect += Server_OnCannotConnect;
             server.Connect();
             counter = new Counter[gateSize];
             terminal = new Terminal[gateSize];
@@ -38,7 +39,12 @@ namespace Baggage_Sortering
             Initialize();
 
             //server = new CentralServer(counter, terminal);
-            threads = new Thread[] { new Thread(SimulateCheckIn), new Thread(SimulateSorting) };//, new Thread(server.OpenCloseCounters), new Thread(server.OpenCloseTerminals) };
+            threads = new Thread[] { new Thread(SimulateCheckIn), new Thread(SimulateSorting), new Thread(OpenCloseGates) };//, new Thread(server.OpenCloseCounters), new Thread(server.OpenCloseTerminals) };
+        }
+
+        private void Server_OnCannotConnect(object sender, EventArgs e)
+        {
+            Console.WriteLine(sender);
         }
 
         /// <summary>
@@ -80,6 +86,38 @@ namespace Baggage_Sortering
             SortingManager sorting = new SortingManager(counter, terminal, belt, server, gateSize);
             while (true)
                 sorting.StartSorting(this);
+        }
+
+        //todo: FIX THIS SHIT CODE
+        private void OpenCloseGates()
+        {
+            while (true)
+            {
+                for (int i = 0; i < gateSize; i++)
+                {
+                    if (server.ReceiveMessage() == "c" + i.ToString())
+                    {
+                        counter[i].IsOpen = !counter[i].IsOpen;
+                        if (counter[i].IsOpen == true)
+                        {
+                            server.SendMessageToServer($"Counter {i} is Open");
+                        }
+                        else
+                            server.SendMessageToServer($"Counter {i} is Closed");
+
+                    }
+                    if (server.ReceiveMessage() == "t" + i.ToString())
+                    {
+                        terminal[i].IsOpen = !terminal[i].IsOpen;
+                        if (terminal[i].IsOpen == true)
+                        {
+                            server.SendMessageToServer($"Terminal {i} is Open");
+                        }
+                        else
+                            server.SendMessageToServer($"Terminal {i} is Closed");
+                    }
+                }
+            }
         }
     }
 }

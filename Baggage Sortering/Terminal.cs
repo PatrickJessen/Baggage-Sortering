@@ -8,24 +8,9 @@ namespace Baggage_Sortering
 {
     class Terminal
     {
-        public event EventHandler OnLuggageSortedOut;
-        public event EventHandler OnOpenCloseEvent;
-
         public string Destination { get; private set; }
         public int TerminalNumber { get; set; }
-        private bool isOpen;
-        public bool IsOpen
-        {
-            get { return isOpen; }
-            set
-            {
-                if (isOpen != value)
-                {
-                    isOpen = value;
-                    TriggerOnOpenCloseEvent();
-                }
-            }
-        }
+        public bool IsOpen { get; set; }
 
         private Luggage[] Luggage;
         private int maxLuggageSlots;
@@ -84,47 +69,9 @@ namespace Baggage_Sortering
             return false;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="luggage"></param>
-        public void TriggerOnLuggageTransfered(Luggage luggage)
-        {
-
-            EventHandler handler = OnLuggageSortedOut;
-            if (handler != null)
-                OnLuggageSortedOut($"{luggage.Owner}'s luggage was transfered at {luggage.TimeStampOut}. And going to {luggage.Destination}", EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void TriggerOnOpenCloseEvent()
-        {
-            EventHandler handler = OnOpenCloseEvent;
-            if (handler != null)
-            {
-                ForwardMessage();
-            }
-        }
-
         public string SendInformation(Luggage luggage)
         {
             return $"{luggage.Owner}'s luggage was transfered at {luggage.TimeStampOut}. And going to {luggage.Destination}";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void ForwardMessage()
-        {
-            if (IsOpen)
-            {
-                OnOpenCloseEvent($"\nTerminal number {TerminalNumber} was opened", EventArgs.Empty); 
-                return;
-            }
-
-            OnOpenCloseEvent($"\nTerminal number {TerminalNumber} was closed", EventArgs.Empty);
         }
     }
 }

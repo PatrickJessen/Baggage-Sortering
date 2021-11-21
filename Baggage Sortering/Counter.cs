@@ -9,24 +9,8 @@ namespace Baggage_Sortering
 {
     class Counter
     {
-        public event EventHandler OnPassengerCheckedIn;
-        public event EventHandler OnLuggageSortedIn;
-        public event EventHandler OnOpenCloseEvent;
-
         public Passenger Passenger { get; set; }
-        private bool isOpen;
-        public bool IsOpen
-        {
-            get { return isOpen; }
-            set
-            {
-                if (isOpen != value)
-                {
-                    isOpen = value;
-                    TriggerOnOpenCloseEvent();
-                }
-            }
-        }
+        public bool IsOpen { get; set; }
 
         public int CounterNumber { get; set; }
 
@@ -60,30 +44,6 @@ namespace Baggage_Sortering
             server.SendMessageToServer(SendLuggageInformation());
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void TriggerOnPassengerCheckedIn()
-        {
-            EventHandler handler = OnPassengerCheckedIn;
-            if (handler != null)
-            {
-                OnPassengerCheckedIn($"{this.Passenger.Name} {this.Passenger.LastName} Just checked in.", EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void TriggerOnLuggageSortedIn()
-        {
-            EventHandler handler = OnLuggageSortedIn;
-            if (handler != null)
-            {
-                OnLuggageSortedIn($"{this.Passenger.Name} {this.Passenger.LastName}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}", EventArgs.Empty);
-            }
-        }
-
         public string SendCheckInInformation()
         {
             return $"{this.Passenger.Name} {this.Passenger.LastName} Just checked in.";
@@ -92,32 +52,6 @@ namespace Baggage_Sortering
         private string SendLuggageInformation()
         {
             return $"{this.Passenger.Name} {this.Passenger.LastName}'s luggage was added to the belt at {this.Passenger.Luggage.TimeStampIn}. And going to {Passenger.FlightPlan.Country}";
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void TriggerOnOpenCloseEvent()
-        {
-            EventHandler handler = OnOpenCloseEvent;
-            if (handler != null)
-            {
-                ForwardMessage();
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void ForwardMessage()
-        {
-            if (IsOpen)
-            {
-                OnOpenCloseEvent($"\nCounter number {CounterNumber} was opened", EventArgs.Empty);
-                return;
-            }
-
-            OnOpenCloseEvent($"\nCounter number {CounterNumber} was closed", EventArgs.Empty);
         }
     }
 }

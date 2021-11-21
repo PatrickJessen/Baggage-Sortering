@@ -10,7 +10,7 @@ namespace Baggage_Sortering.FileManagement
 {
     class FileHandler
     {
-        public Passenger GetReservationFromFile(string path)
+        public Passenger GetPassengerFromFile(string path)
         {
             string reservationString = GetReservationString(path);
             string fName = reservationString.Split(' ', StringSplitOptions.None)[0];
@@ -27,7 +27,7 @@ namespace Baggage_Sortering.FileManagement
                 try
                 {
                     line = reader.ReadLine();
-                    if (line == "")
+                    if (line == null)
                     {
                         Thread.Sleep(5000);
                         line = reader.ReadLine();
@@ -53,6 +53,29 @@ namespace Baggage_Sortering.FileManagement
             catch
             {
 
+            }
+        }
+
+        public bool IsReservationEmpty(string path)
+        {
+            string line = "";
+            using (StreamReader reader = new StreamReader(path))
+            {
+                try
+                {
+                    line = reader.ReadLine();
+                    if (line == null)
+                    {
+
+                        reader.Close();
+                        return true;
+                    }
+                }
+                catch
+                {
+
+                }
+                return false;
             }
         }
     }

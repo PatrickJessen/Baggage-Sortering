@@ -34,7 +34,8 @@ namespace Baggage_Sortering
             try
             {
                 Monitor.Enter(locker);
-                passenger = file.GetReservationFromFile("../../../../Assets/Reservation.txt");
+                WaitForReservation(locker);
+                passenger = file.GetPassengerFromFile("../../../../Assets/Reservation.txt");
                 if (IsBeltFull())
                     Monitor.Wait(locker);
 
@@ -56,6 +57,7 @@ namespace Baggage_Sortering
         {
             Random rand = new Random();
             int randNum = rand.Next(0, counter.Length);
+
             counter[randNum].CheckInPassenger(passenger, server);
             Thread.Sleep(1000);
             counter[randNum].AddLuggageToBelt(belt, server);
@@ -71,6 +73,14 @@ namespace Baggage_Sortering
                 return true;
 
             return false;
+        }
+
+        private void WaitForReservation(object locker)
+        {
+            if (file.IsReservationEmpty("../../../../Assets/Reservation.txt"))
+            {
+                Monitor.Wait(locker);
+            }
         }
     }
 }
